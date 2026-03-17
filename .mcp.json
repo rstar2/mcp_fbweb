@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "fbweb": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "mcp_fbweb",
+        "--verbose"
+      ],
+      "env": {
+        "FBWEB_AUTH_CLIENT_ID": "69aedeab3d8beb3a8ea2ecb1",
+        "FBWEB_AUTH_REFRESH_TOKEN": "eyJraWQiOiJSU0EtT0F1dGgiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJRTnJzdGFyMkBhYnYuYmciLCJ1aWQiOiJRTnJzdGFyMkBhYnYuYmciLCJhenAiOiI2OWFlZGVhYjNkOGJlYjNhOGVhMmVjYjEiLCJuYW1lIjoicnN0YXIyIiwiZXhwIjoxODA1MjIwMzQ2LCJpYXQiOjE3NzM2ODQzNDYsImp0aSI6ImViNzk1ZDFiLTcxMWMtNGZjYy1hYzJlLWM0ZDllZjRlMjAzMiIsImVtYWlsIjoicnN0YXIyQGFidi5iZyJ9.MLiI2bRFDVeIvdQFRnl3vaZxpx6Pk5Z5VU8BzRudxzTGK5iP7TVmvbWW9crJJ1YlEr-WMPpMjodvXxyV9Xta66LX1lXgzOTQ20Dv3enTaoFUhmcrO0qR7ygjTELi0_wb1QaaR6IpaTXmf76DB_IlyCIbYi7pLel8UovwDzXu6q8FQ9Klp_urYyEOIH-d5xBq83WlBnSgSJnyYfzMXFp5TOYxdf6lxi949fBk1KdxsodFv1sh4qdSCTrWZ7hYJtbCUGhT5teKNFXM35MGRWUAWb-gX2DrIRdzhWKP39uayDYmKA9sFeihw7mzoaxpxJTP-iTbULkxcUxP73yMSfVF7g",
+        "FBWEB_BASE_URL": "https://rumen-pc.cnexusdev.com",
+        "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+      }
+    }
+  }
+}
