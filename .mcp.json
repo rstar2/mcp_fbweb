@@ -3,14 +3,15 @@
     "fbweb": {
       "type": "stdio",
       "command": "npx",
-      "args": [
-        "mcp_fbweb",
-        "--verbose"
-      ],
+      "args": ["-y", "@fileflex/mcp", "--verbose"],
       "env": {
+        "--NOTE--1": "these are fictitious values, no need to try and use them",
+        "--NOTE--2": "you will need to replace them with your own",
         "FBWEB_AUTH_CLIENT_ID": "69aedeab3d8beb3a8ea2ecb1",
-        "FBWEB_AUTH_REFRESH_TOKEN": "eyJraWQiOiJSU0EtT0F1dGgiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJRTnJzdGFyMkBhYnYuYmciLCJ1aWQiOiJRTnJzdGFyMkBhYnYuYmciLCJhenAiOiI2OWFlZGVhYjNkOGJlYjNhOGVhMmVjYjEiLCJuYW1lIjoicnN0YXIyIiwiZXhwIjoxODA1MjIwMzQ2LCJpYXQiOjE3NzM2ODQzNDYsImp0aSI6ImViNzk1ZDFiLTcxMWMtNGZjYy1hYzJlLWM0ZDllZjRlMjAzMiIsImVtYWlsIjoicnN0YXIyQGFidi5iZyJ9.MLiI2bRFDVeIvdQFRnl3vaZxpx6Pk5Z5VU8BzRudxzTGK5iP7TVmvbWW9crJJ1YlEr-WMPpMjodvXxyV9Xta66LX1lXgzOTQ20Dv3enTaoFUhmcrO0qR7ygjTELi0_wb1QaaR6IpaTXmf76DB_IlyCIbYi7pLel8UovwDzXu6q8FQ9Klp_urYyEOIH-d5xBq83WlBnSgSJnyYfzMXFp5TOYxdf6lxi949fBk1KdxsodFv1sh4qdSCTrWZ7hYJtbCUGhT5teKNFXM35MGRWUAWb-gX2DrIRdzhWKP39uayDYmKA9sFeihw7mzoaxpxJTP-iTbULkxcUxP73yMSfVF7g",
+        "FBWEB_AUTH_REFRESH_TOKEN": "eyJraWQiOiJSU0EtT0F1dGgiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJRTm5lc2hldi5ydW1lbkBnbWFpbC5jb20iLCJ1aWQiOiJRTm5lc2hldi5ydW1lbkBnbWFpbC5jb20iLCJhenAiOiI2OWFlZGVhYjNkOGJlYjNhOGVhMmVjYjEiLCJuYW1lIjoiUnVtZW4gTmVzaGV2IiwiZXhwIjoxODIyNDAyNjQzLCJpYXQiOjE3OTA4NjY2NDMsImp0aSI6IjAzOWVjZjEwLTBjYWQtNGZkZS05MTcwLTFiMTY2MGIwMzNmYiIsImVtYWlsIjoibmVzaGV2LnJ1bWVuQGdtYWlsLmNvbSJ9.ni21KJB34nqqIuYWY2oCFyw4wZVG5kvVU9g5xTvoVhASuA0awvznbrC47tGkWYv6bV4A9vDQkpS_-ClBDUkemx-B75BCYM6216mu_XG_ZBchmNcftXy5DVC3aS8oNBLg2p-EvevDX1DRbv89pBRdujqSSir7OZA3F7GKsiv7zECDAP5vQUy_v976o_WkVrQ2O-sLsXwI8nT-C1wIuIgR4GTYpy_N2n3ryqSu2iswN8_edpLKKNE5e4TWRW9guySHtPVyNodsjR18G2KoS8YRK3WYF0rxPNZFoq9oyxGWYVWzE4QMkyWKOB_DKCulUw_jiCY5bHHhJb3QTFQKm8MvjA",
         "FBWEB_BASE_URL": "https://rumen-pc.cnexusdev.com",
+
+        "--NOTE--3": "need for local development only, do not use in production",
         "NODE_TLS_REJECT_UNAUTHORIZED": "0"
       }
     }
