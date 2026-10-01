@@ -1,16 +1,16 @@
 {
-  "name": "@magicmedia/mcp_fbweb",
+  "name": "@fileflex/mcp",
   "version": "0.0.1",
   "type": "module",
-  "description": "MCP for FbWeb API - A Model Context Protocol server that provides AI capabilities for accessing FbWeb server API",
-  "author": "Rumen Neshev <rstar2@abv.bg>",
+  "description": "A Model Context Protocol (MCP) server that provides AI capabilities for accessing a FileFlex server API",
+  "author": "Rumen Neshev <rumenn@qnext.com> (<rstardev@abv.bg>)",
   "keywords": [
-    "FbWeb",
-    "mcp"
+    "FileFlex",
+    "MCP"
   ],
   "license": "MIT",
   "bin": {
-    "mcp_fbweb": "./build/index.js"
+    "mcp": "./build/index.js"
   },
   "files": [
     "build",
