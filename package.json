@@ -1,6 +1,6 @@
 {
   "name": "@magicmedia/mcp_fbweb",
-  "version": "1.0.1",
+  "version": "0.0.1",
   "type": "module",
   "description": "MCP for FbWeb API - A Model Context Protocol server that provides AI capabilities for accessing FbWeb server API",
   "author": "Rumen Neshev <rstar2@abv.bg>",
