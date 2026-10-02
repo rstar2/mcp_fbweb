@@ -26,7 +26,7 @@ export function registerTool(server: McpServer) {
             if (!ownerUid.startsWith("QN")) {
                 ownerUid = "QN" + ownerUid;
             }
-            const {activities} = await apiRequest("list_activity", {
+            const data = await apiRequest("list_activity", {
                 pagination: {
                     isNewer: false,
                     readState: "read",
@@ -39,10 +39,10 @@ export function registerTool(server: McpServer) {
                 content: [
                     {
                         type: "text",
-                        text: `There are ${activities.length} activities`,
+                        text: `There are ${data.activities.length} activities`,
                     },
                 ],
-                structuredContent: {activities},
+                structuredContent: data,
             };
         },
     );

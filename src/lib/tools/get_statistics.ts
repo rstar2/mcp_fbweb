@@ -1,33 +1,27 @@
-import z from "zod";
 import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
-
 import {apiRequest} from "../api.js";
-
 
 /**
  * Easy way to disable a tool temporary
  */
 export const isDisabled = false;
 
-export const name = "list_providers";
+export const name = "get_statistics";
 
 export function registerTool(server: McpServer) {
     server.registerTool(
         name,
         {
-            title: "List Providers",
-            description: "List Providers for current user",
-            inputSchema: {
-                schema: z.string().optional().describe("Type of the providers, like 'Dropbox', 'Box',..."),
-            },
+            title: "Statistics",
+            description: "Get the statistics data for the currently authorized FileFlex user",
         },
-        async ({schema}) => {
-            const data = await apiRequest("list_provider", {schema});
+        async () => {
+            const data = await apiRequest("statistic_get");
             return {
                 content: [
                     {
                         type: "text",
-                        text: `There are ${data.providers.length} providers`,
+                        text: `There are ${data.lists_per_mid.length} requests in the statistics data`,
                     },
                 ],
                 structuredContent: data,

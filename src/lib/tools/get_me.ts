@@ -6,7 +6,7 @@ import {getAuthUid} from "../auth.js";
  */
 export const isDisabled = false;
 
-export const name = "me";
+export const name = "get_me";
 
 export function registerTool(server: McpServer) {
     server.registerTool(
