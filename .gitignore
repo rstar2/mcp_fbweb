@@ -4,10 +4,6 @@ node_modules
 # Build
 build
 
-# Environment
-.env.*
-!.env.example
-
 # Cache
 *.log
 

@@ -1,6 +1,6 @@
-# FbWeb MCP Server - `mcp_fbweb`
+# FileFlex MCP Server
 
-A Model Context Protocol (MCP) server that provides AI capabilities for accessing a FbWeb server
+A Model Context Protocol (MCP) server that provides AI capabilities for accessing a FileFlex server API
 
 ## Installation / Usage
 
@@ -9,13 +9,14 @@ Set your auth token and run:
 ### Claude Code
 
 ```shell
-claude mcp add --scope project mcp_fbweb \
+claude mcp add --scope project fileflex\
+               --env FBWEB_AUTH_CLIENT_ID=fbweb_client_id \
                --env FBWEB_AUTH_REFRESH_TOKEN=fbweb_refresh_token \
                --env FBWEB_BASE_URL=fbweb_base_url \
-               -- npx mcp_fbweb
+               -- npx -y fileflex/mcp
 ```
 
-> Can also use `npx mcp_fbweb --verbose` if more verbose debug traces are needed.
+> Can also use `npx -y @fileflex/mcp --verbose` if more verbose debug traces are needed.
 
 ### Manual Configuration
 
@@ -26,11 +27,13 @@ claude mcp add --scope project mcp_fbweb \
       "type": "stdio",
       "command": "npx",
       "args": [
-        "mcp_fbweb"
+         "-y",
+        "@fileflex/mcp"
       ],
       "env": {
+        "FBWEB_AUTH_CLIENT_ID": "fbweb_client_id",
         "FBWEB_AUTH_REFRESH_TOKEN": "fbweb_refresh_token",
-        "FBWEB_BASE_URL": "fbweb_base_url",
+        "FBWEB_BASE_URL": "fbweb_base_url"
       }
     }
   }
@@ -41,8 +44,9 @@ claude mcp add --scope project mcp_fbweb \
 
 Configuration props are passed using these environment variables:
 
-- `FBWEB_AUTH_REFRESH_TOKEN` - Required authentication refresh-token for accessing the FbWeb server
-- `FBWEB_BASE_URL`: The FbWeb server base url
+- `FBWEB_AUTH_CLIENT_ID` - (Required) Authentication OAuth Client ID for accessing the FileFlex server
+- `FBWEB_AUTH_REFRESH_TOKEN` - (Required) Authentication refresh-token for accessing the FileFlex server
+- `FBWEB_BASE_URL`: (Optional) The FileFlex server base url
 - `--verbose` - command argument for showing more verbose error details
 
 ## Available Tools
@@ -57,12 +61,11 @@ This server provides specialized tools for different image and video analysis ta
 
 ```shell
 pnpm install
-pnpm build
-pnpm start:dev
+pnpm dev
 ```
 
 ## Deploy / Publish
 
 ```shell
-npm publish
+pnpm publish
 ```
