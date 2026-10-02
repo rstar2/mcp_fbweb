@@ -3,7 +3,7 @@
     "fileflex": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@fileflex/mcp", "--verbose"],
+      "args": ["-y", "@fileflex/mcp@latest", "--verbose"],
       "env": {
         "--NOTE--1": "these are fictitious values, no need to try and use them",
         "--NOTE--2": "you will need to replace them with your own",
