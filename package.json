@@ -1,6 +1,6 @@
 {
   "name": "@fileflex/mcp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "description": "A Model Context Protocol (MCP) server that provides AI capabilities for accessing a FileFlex server API",
   "author": "Rumen Neshev <rumenn@qnext.com> (<rstardev@abv.bg>)",
@@ -22,7 +22,7 @@
     "start": "node build/index.js",
     "dev": "tsx --env-file=.env.development src/index.ts",
     "prepublishOnly": "pnpm build",
-    "publish-beta": "pnpm publish --tag beta",
+    "publish:beta": "pnpm publish --tag beta",
     "test": "tsx --env-file=.env.test --test test/*.test.ts"
   },
   "dependencies": {
