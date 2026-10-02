@@ -38,21 +38,22 @@ export async function apiRequest(
         if (!response.ok) {
             const details = await response.text();
 
+            // if (response.status === 401 || response.status === 403) {
+            //     const message = `Not authorized calling FbWeb api endpoint ${endpoint}. Reconnect the MCP in order to authorize again.`;
+            //
+            //     // clear the auth token
+            //     clearAuth();
+            //
+            //     throw new AuthError(
+            //         config.verbose
+            //             ? `${message} : ${response.status}, ${details}`
+            //             : message,
+            //         response.status,
+            //         details,
+            //     );
+            // }
+
             const message = `Error calling FileFlex api endpoint ${endpoint}`;
-            if (response.status === 401 || response.status === 403) {
-                const message = `Not authorized calling FbWeb api endpoint ${endpoint}. Reconnect the MCP in order to authorize again.`;
-
-                // clear the auth token
-                clearAuth();
-
-                throw new AuthError(
-                    config.verbose
-                        ? `${message} : ${response.status}, ${details}`
-                        : message,
-                    response.status,
-                    details,
-                );
-            }
             throw new ApiError(
                 config.verbose
                     ? `${message} : ${response.status}, ${details}`
