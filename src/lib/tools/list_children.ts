@@ -32,7 +32,7 @@ export function registerTool(server: McpServer) {
                     loc: pid,
                     sha: true,
 
-                    path: path ?? "/",
+                    path: path || "/",
                 },
                 includeParentInfo: true,
                 requestPage: {start: 0, count: 250}
