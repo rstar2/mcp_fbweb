@@ -1,9 +1,12 @@
-import {clearAuth, getAccessToken} from "./auth.js";
 import config from "./config.js";
-import {ApiError, AuthError} from "./error.js";
+import {getAccessToken, reloadAuth} from "./auth.js";
+import {ApiError} from "./error.js";
 import {JSONObject} from "./types.js";
+import {log} from "./log.js";
 
+const maxAuthRetries = 2;
 let rid = 0;
+
 
 function getRid() {
     return `${++rid}`;
@@ -14,14 +17,23 @@ export async function apiRequest(
     data?: JSONObject,
     method: "GET" | "POST" = "GET",
 ) {
+    return tryApiRequest(endpoint, data, method);
+}
+
+async function tryApiRequest(
+    endpoint: string,
+    data?: JSONObject,
+    method: "GET" | "POST" = "GET",
+    tryCount = 1,
+) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), config.fbweb.timeout);
     try {
         const url = new URL(endpoint, config.fbweb.baseEndpointUrl);
         url.searchParams.set("rid", getRid());
+        // NOTE: Currently all cases are sending the data in the query
         if (data) url.searchParams.set("data", JSON.stringify(data));
 
-        // NOTE: Currently all cases are sending the data in the query
         const accessToken = await getAccessToken();
         const response = await fetch(url, {
             method,
@@ -38,20 +50,26 @@ export async function apiRequest(
         if (!response.ok) {
             const details = await response.text();
 
-            // if (response.status === 401 || response.status === 403) {
-            //     const message = `Not authorized calling FbWeb api endpoint ${endpoint}. Reconnect the MCP in order to authorize again.`;
-            //
-            //     // clear the auth token
-            //     clearAuth();
-            //
-            //     throw new AuthError(
-            //         config.verbose
-            //             ? `${message} : ${response.status}, ${details}`
-            //             : message,
-            //         response.status,
-            //         details,
-            //     );
-            // }
+            if (response.status === 401 || response.status === 403) {
+                // const message = `Not authorized calling FbWeb api endpoint ${endpoint}. Reconnect the MCP in order to authorize again.`;
+                // throw new AuthError(
+                //     config.verbose
+                //         ? `${message} : ${response.status}, ${details}`
+                //         : message,
+                //     response.status,
+                //     details,
+                // );
+
+                // rety same task if allowed
+                if (tryCount < maxAuthRetries) {
+                    log(`API auth error so reload auth and try again, retry=${tryCount}`);
+
+                    // try to reload the auth , e.g. to create new valid access token
+                    await reloadAuth();
+
+                    return tryApiRequest(endpoint, data, method, tryCount + 1);
+                }
+            }
 
             const message = `Error calling FileFlex api endpoint ${endpoint}`;
             throw new ApiError(

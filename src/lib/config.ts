@@ -27,7 +27,7 @@ const config = {
     fbweb: {
         baseEndpointUrl,
         clientId: process.env.FBWEB_AUTH_CLIENT_ID,
-        refreshToken: process.env.FBWEB_AUTH_REFRESH_TOKEN,
+        rootRefreshToken: process.env.FBWEB_AUTH_REFRESH_TOKEN,
         timeout: 5000, // 5 seconds
     },
 };

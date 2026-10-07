@@ -1,10 +1,11 @@
 import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 import {StdioServerTransport} from "@modelcontextprotocol/sdk/server/stdio.js";
+import {InitializeRequestSchema} from "@modelcontextprotocol/sdk/types.js";
 
 import config from "./config.js";
 import {registerTools} from "./tools/index.js";
-import {InitializeRequestSchema} from "@modelcontextprotocol/sdk/types.js";
 import {loadAuth} from "./auth.js";
+import {log} from "./log.js";
 
 export async function startMcpServer() {
     const serverInfo = {
@@ -16,6 +17,8 @@ export async function startMcpServer() {
     // 1. Set init handler first
     server.server.setRequestHandler(InitializeRequestSchema, async (request) => {
         await loadAuth();
+
+        log("Server is running");
         return {
             // latest MCP protocol version
             protocolVersion: "2024-11-05",
@@ -25,14 +28,14 @@ export async function startMcpServer() {
         };
     });
 
-    await setupErrorHandling(server);
+    setupErrorHandling(server);
     await registerTools(server);
     await connect(server);
 }
 
 function setupErrorHandling(server: McpServer) {
     const gracefulShutdown = (exitCode: number = 0) => {
-        console.info("Performing graceful shutdown...");
+        log("Performing graceful shutdown...");
 
         // Cleanup logic can be added here
         // ...
@@ -41,19 +44,19 @@ function setupErrorHandling(server: McpServer) {
     };
 
     process.on("uncaughtException", (error) => {
-        console.error("Uncaught exception:", error);
+        log("Uncaught exception:", error);
         gracefulShutdown(1);
     });
     process.on("unhandledRejection", (reason, promise) => {
-        console.error("Unhandled rejection at:", {promise, reason});
+        log("Unhandled rejection at:", {promise, reason});
         gracefulShutdown(1);
     });
     process.on("SIGINT", () => {
-        console.info("Received SIGINT, shutting down gracefully...");
+        log("Received SIGINT, shutting down gracefully...");
         gracefulShutdown();
     });
     process.on("SIGTERM", () => {
-        console.info("Received SIGTERM, shutting down gracefully...");
+        log("Received SIGTERM, shutting down gracefully...");
         gracefulShutdown();
     });
 }
@@ -61,6 +64,5 @@ function setupErrorHandling(server: McpServer) {
 async function connect(server: McpServer) {
     const transport = new StdioServerTransport();
     await server.connect(transport);
-
-    console.log("FileFlex MCP Server is running");
+    log("Loading...");
 }

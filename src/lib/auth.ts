@@ -4,6 +4,7 @@ import path from "node:path";
 
 import config from "./config.js";
 import {AuthError} from "./error.js";
+import {log} from "./log.js";
 
 type Auth = {
     accessToken: string;
@@ -42,103 +43,41 @@ export function clearAuth() {
 }
 
 export async function loadAuth() {
-    // TODO: when restoring Auth from file if the accessToken is not "valid" any more
-    // then when exchanging the latest refreshToken must be used, not the init/root one
-    await restoreAuth();
-    if (auth) {
-        return;
-    }
+    log("Loading auth...");
 
-    const authNew = await exchangeRefreshToken();
-
-    await storeAuth(authNew);
-
-    auth = authNew;
-}
-
-async function exchangeRefreshToken(): Promise<Auth> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), config.fbweb.timeout);
     try {
-        // use the authorization token endpoint for exchanging current refresh token
-        // to a new valid one INCLUDING a valid access token
-        const url = new URL(
-            "/fbweb/app/public/ajax/oauth_token",
-            config.fbweb.baseEndpointUrl.origin,
-        );
-        url.searchParams.set("grant_type", "refresh_token");
-        url.searchParams.set("client_id", config.fbweb.clientId);
-        url.searchParams.set("refresh_token", config.fbweb.refreshToken);
-
-        const response = await fetch(url, {
-            method: "POST",
-            signal: controller.signal,
-        });
-
-        // stop the timeout immediately
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-            const details = await response.text();
-
-            const message = "Error calling FileFlex token-exchange endpoint";
-            throw new AuthError(
-                config.verbose
-                    ? `${message} : ${response.status}, ${details}`
-                    : message,
-                response.status,
-                details,
-            );
-        }
-
-        const {
-            refresh_token: refreshToken,
-            access_token: accessToken,
-            uid,
-        } = await response.json();
-
-        console.log("FileFlex MCP created new auth");
-        return {refreshToken, accessToken, uid};
-    } catch (error: unknown) {
-        // stop the timeout immediately
-        clearTimeout(timeoutId);
-
-        // rethrow if already ApiError
-        if (error instanceof AuthError) {
-            throw error;
-        }
-
-        if (error instanceof Error && error.name === "AbortError") {
-            throw new AuthError(
-                `Request timeout after ${config.fbweb.timeout}ms when calling FileFlex token-exchange endpoint`,
-            );
-        }
-
-        let message = error instanceof Error ? error.message : String(error);
-        if (config.verbose && error instanceof Error)
-            message = `${error.message} - ${error.stack}`;
-
-        throw new AuthError(
-            `Network error when calling FileFlex token-exchange endpoint: ${message}`,
-        );
+        await restoreAuth();
+    } catch (err) {
+        // if "valid" auth is not found, then "create" one by exchanging the refreshToken for an accessToken
+        log("Failed to restore auth from file:", err);
+        await reloadAuth();
     }
 }
 
-export async function restoreAuth(): Promise<void> {
+export async function reloadAuth() {
+    // exchange the refreshToken (or rootRefreshToken) for an accessToken
+    await exchangeRefreshToken();
+
+    // save it
+    await storeAuth();
+}
+
+
+export async function restoreAuth() {
     try {
         const authPath = getAuthFilePath();
         const content = await fs.readFile(authPath, "utf-8");
         const storedAuths: StoredAuth[] = JSON.parse(content);
 
-        const {clientId, refreshToken} = config.fbweb;
+        const {clientId, rootRefreshToken} = config.fbweb;
         const found = storedAuths.find(
-            (a) => a.clientId === clientId && a.rootRefreshToken === refreshToken,
+            (a) => a.clientId === clientId && a.rootRefreshToken === rootRefreshToken,
         );
 
         if (found) {
             const {clientId: _, rootRefreshToken: __, ...authStored} = found;
             auth = authStored;
-            console.log("FileFlex MCP use stored auth");
+            log("Found stored auth");
             return;
         }
     } catch {
@@ -146,7 +85,11 @@ export async function restoreAuth(): Promise<void> {
     }
 }
 
-export async function storeAuth(auth: Auth) {
+export async function storeAuth(anAuth?: Auth) {
+    anAuth ??= auth;
+    if (!anAuth)
+        throw new Error("No auth to store");
+
     const cacheDir = getCacheDir();
     const authPath = getAuthFilePath();
 
@@ -155,8 +98,8 @@ export async function storeAuth(auth: Auth) {
 
     const authFull: StoredAuth = {
         clientId: config.fbweb.clientId,
-        rootRefreshToken: config.fbweb.refreshToken,
-        ...auth,
+        rootRefreshToken: config.fbweb.rootRefreshToken,
+        ...anAuth,
     };
 
     // Read existing auths or start with empty array
@@ -187,7 +130,76 @@ export async function storeAuth(auth: Auth) {
     await fs.writeFile(authPath, JSON.stringify(storedAuths, null, 2), {
         mode: 0o600, // Read/write for owner only
     });
-    console.log("FileFlex MCP stored auth");
+    log("Stored auth");
+}
+
+async function exchangeRefreshToken() {
+    log("Fetching new `accessToken`...");
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), config.fbweb.timeout);
+    try {
+        // use the authorization token endpoint for exchanging current refresh token
+        // to a new valid one INCLUDING a valid access token
+        const url = new URL(
+            "/fbweb/app/public/ajax/oauth_token",
+            config.fbweb.baseEndpointUrl.origin,
+        );
+        url.searchParams.set("grant_type", "refresh_token");
+        url.searchParams.set("client_id", config.fbweb.clientId);
+        url.searchParams.set("refresh_token", auth?.refreshToken || config.fbweb.rootRefreshToken);
+
+        const response = await fetch(url, {
+            method: "POST",
+            signal: controller.signal,
+        });
+
+        // stop the timeout immediately
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            const details = await response.text();
+
+            const message = "Error calling FileFlex token-exchange endpoint";
+            throw new AuthError(
+                config.verbose
+                    ? `${message} : ${response.status}, ${details}`
+                    : message,
+                response.status,
+                details,
+            );
+        }
+
+        const {
+            refresh_token: refreshToken,
+            access_token: accessToken,
+            uid,
+        } = await response.json();
+
+        log("Created new auth");
+        auth = {refreshToken, accessToken, uid};
+    } catch (error) {
+        // stop the timeout immediately
+        clearTimeout(timeoutId);
+
+        // rethrow if already ApiError
+        if (error instanceof AuthError) {
+            throw error;
+        }
+
+        if (error instanceof Error && error.name === "AbortError") {
+            throw new AuthError(
+                `Request timeout after ${config.fbweb.timeout}ms when calling FileFlex token-exchange endpoint`,
+            );
+        }
+
+        let message = error instanceof Error ? error.message : String(error);
+        if (config.verbose && error instanceof Error)
+            message = `${error.message} - ${error.stack}`;
+
+        throw new AuthError(
+            `Network error when calling FileFlex token-exchange endpoint: ${message}`,
+        );
+    }
 }
 
 function getCacheDir(): string {

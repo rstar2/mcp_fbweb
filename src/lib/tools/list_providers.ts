@@ -3,7 +3,6 @@ import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 
 import {apiRequest} from "../api.js";
 
-
 /**
  * Easy way to disable a tool temporary
  */
@@ -18,11 +17,11 @@ export function registerTool(server: McpServer) {
             title: "List Providers",
             description: "List Providers for current user",
             inputSchema: {
-                schema: z.string().optional().describe("Type of the providers, like 'Dropbox', 'Box',..."),
+                schema: z.string().optional().describe("Type of the providers, like 'Dropbox', 'OneDrive', etc..."),
             },
         },
         async ({schema}) => {
-            const data = await apiRequest("list_provider", {schema});
+            const data = await apiRequest("provider_list", {schema});
             return {
                 content: [
                     {

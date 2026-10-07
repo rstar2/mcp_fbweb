@@ -2,6 +2,7 @@ import {readdir} from "node:fs/promises";
 import {join, dirname} from "node:path";
 import {fileURLToPath} from "node:url";
 import type {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
+import {log} from "../log.js";
 
 const toolsDir = dirname(fileURLToPath(import.meta.url));
 
@@ -14,7 +15,7 @@ export async function registerTools(server: McpServer): Promise<void> {
 
         const module = await import(join(toolsDir, file));
         if (!module.isDisabled && module.registerTool) {
-            console.log(`Register tool: ${module.name}`);
+            log(`Register tool: ${module.name}`);
             module.registerTool?.(server);
         }
     }

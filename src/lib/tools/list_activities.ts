@@ -3,7 +3,6 @@ import {McpServer} from "@modelcontextprotocol/sdk/server/mcp.js";
 
 import {apiRequest} from "../api.js";
 
-
 /**
  * Easy way to disable a tool temporary
  */

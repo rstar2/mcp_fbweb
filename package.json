@@ -1,6 +1,6 @@
 {
   "name": "@fileflex/mcp",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "type": "module",
   "description": "A Model Context Protocol (MCP) server that provides AI capabilities for accessing a FileFlex server API",
   "author": "Rumen Neshev <rumenn@qnext.com> (<rstardev@abv.bg>)",
