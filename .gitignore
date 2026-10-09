@@ -16,6 +16,9 @@ Thumbs.db
 !.vscode/settings.json
 !.vscode/extensions.json
 
+# SVN
+.svn
+
 # Claude
 .claude/settings.local.json
 .mcp.json
